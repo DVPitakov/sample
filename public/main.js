@@ -6,16 +6,18 @@ function onSubmit(form) {
 	};
 	let result = request('/users', data);
 	form.hidden = true;
-	window.helloWorld.innerHTML = hello(data.user, result)	
+	window.helloWorld.innerHTML = hello(data.user)	+ ' Вы зашли ' + plural(result);
 	console.log(data, result);
 }
 
-function hello (userName, numberOfVisit) {
-	return 'Привет, ' + userName + ' Вы зашли ' + plural(numberOfVisit);
+function hello (userName) {
+	return 'Привет, ' + userName;
 }
 if (typeof exports === 'object') {
 	exports.hello = hello;
+	exports.plural = plural;
 }
+
 function plural(num) {
 	if (num % 10 < 2 || num % 10 > 4) {
 		return num + " раз"
