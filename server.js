@@ -1,23 +1,28 @@
 let express = require('express');
-let technologger = require('technologger');
 let parser = require('body-parser');
 let app = express();
-if (myArr === undefined) var myArr = {};
+let technoDoc = require('techno-gendoc');
+let path = require('path');
+
+let technolibs = require('technolibs');
+
 app.use('/', express.static('public'));
+technoDoc.generate(require('./api'), 'public');
 
 app.use(parser.json());
-app.use(technologger);
+app.use('/libs', express.static('node_modules'));
 
-app.post('/users', (req, res, body) => {
-    console.log(req.body);
-    let	mail = req.body.email;
-    if (myArr[mail]) {
-		myArr[mail] += 1;
-	}
-	else {
-		myArr[mail] = 1;
-	}
-    res.send(myArr[mail].toString());
+app.post('/api/messages', (req, res) => {
+	technolibs.publish(req.body).then(body => res.json(req.body));
+});
+
+app.get('/api/messages', function (req, res) {
+	res.send([
+		technoDoc.mock(require('./api/scheme/Message')),
+		technoDoc.mock(require('./api/scheme/Message')),
+		technoDoc.mock(require('./api/scheme/Message')),
+		technoDoc.mock(require('./api/scheme/Message'))
+	])
 });
 
 app.listen(process.env.PORT || 3000, () => {
